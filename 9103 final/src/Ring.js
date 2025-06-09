@@ -25,7 +25,9 @@ export class Ring {
    * @param {number}  [cfg.noiseScaleSpeed]
    * @param {number}  [cfg.jitterSpeed]
    * @param {number}  [cfg.jitterAmt]
-   * @param {number}  [cfg.scaleSmooth]   // 新增：缩放平滑系数，0～1
+   * @param {number}  [cfg.scaleSmooth]     // 新增：缩放平滑系数，0～1
+   * @param {string}  [cfg.hoverColor]      // 新增：悬停过渡到的颜色
+   * @param {number}  [cfg.hoverBlendSpeed] // 新增：颜色过渡速率，0～1
    */
   constructor(cfg) {
     // — 基本定位与半径 —  
@@ -37,8 +39,8 @@ export class Ring {
     this.r3 = cfg.r3;
 
     // — 样式配置 —  
-    this.fillStyles   = cfg.fillStyles;
-    this.bgColors     = cfg.bgColors.map(h => color(h));
+    this.fillStyles    = cfg.fillStyles;
+    this.bgColors      = cfg.bgColors.map(h => color(h));
     this.patternColors = cfg.patternColors.map(h =>
       Array.isArray(h)
         ? h.map(c => color(c))
@@ -49,24 +51,31 @@ export class Ring {
 
     // — 渐变色动态状态 —  
     this.transitionProgress = random();
-    this.transitionSpeed    = cfg.colorSpeed       || random(0.005, 0.02);
+    this.transitionSpeed    = cfg.colorSpeed || random(0.005, 0.02);
     this.currentColor       = color(random(RING_COLORS));
     this.targetColor        = color(random(RING_COLORS));
 
     // — 悬停检测 —  
-    this.isHovered = false;
+    this.isHovered = false; // 这个方法来自于询问ChatGPT
 
     // — 呼吸（scale）噪声 —  
     this.scaleNoiseOff   = random(1000);
-    this.noiseScaleSpeed = cfg.noiseScaleSpeed   || 0.005;
+    this.noiseScaleSpeed = cfg.noiseScaleSpeed || 0.005;
 
     // — 抖动配置 —  
     this.jitterSpeed = cfg.jitterSpeed || 0.2;
     this.jitterAmt   = cfg.jitterAmt   || 24;
 
     // — 缩放平滑状态 —  
-    this.currentScale  = 1;
-    this.scaleSmooth   = cfg.scaleSmooth || 0.1;  // 越小过渡越慢
+    this.currentScale = 1;
+    this.scaleSmooth  = cfg.scaleSmooth || 0.1;  // 越小过渡越慢
+
+    // — 新增：悬停颜色过渡状态 —  
+    this.hoverColor      = cfg.hoverColor
+                          ? color(cfg.hoverColor)
+                          : color('#2E0854');
+    this.hoverBlend      = 0;
+    this.hoverBlendSpeed = cfg.hoverBlendSpeed || 0.05;
 
     // — 其他噪声种子 —  
     this.noiseOffset = random(1000);
@@ -102,21 +111,30 @@ export class Ring {
     this.isHovered = d <= this.r3;
   }
 
-  /** 绘制环体 —— 包含平滑呼吸缩放 & 半径抖动 */
+  /** 绘制环体 —— 包含平滑呼吸缩放 & 半径抖动 & 悬停色渐变 */
   display() {
     this.update();
     this.checkHover();
 
-    // —— 1. 计算目标缩放（Perlin 呼吸） —— 
+    // —— 更新悬停色混合进度 ——  
+    this.hoverBlend += this.isHovered
+      ? this.hoverBlendSpeed
+      : -this.hoverBlendSpeed;
+    this.hoverBlend = constrain(this.hoverBlend, 0, 1);
+
+    // —— 1. 计算目标缩放（Perlin 呼吸） ——  
     const nScale = noise(this.scaleNoiseOff + frameCount * this.noiseScaleSpeed);
     const targetScale = this.isHovered
-      ? map(nScale, 0, 1, 0.5, 0.85)
+      ? map(nScale, 0, 1, 0.5,  0.85)
       : map(nScale, 0, 1, 0.98, 1.02);
 
-    // —— 2. 平滑过渡到目标缩放 —— 
-    this.currentScale = lerp(this.currentScale, targetScale, this.scaleSmooth); // lerp代码来自于询问ChatGPT，用于解决缩小不自然的问题
+    // —— 2. 平滑过渡到目标缩放 ——  
+    this.currentScale = lerp(this.currentScale, targetScale, this.scaleSmooth);
 
-    // —— 3. 半径抖动 —— 
+    // —— 3. 计算渲染用颜色 ——  
+    const renderColor = lerpColor(this.currentColor, this.hoverColor, this.hoverBlend);
+
+    // —— 4. 半径抖动 ——  
     const j = this.isHovered
       ? (noise(this.noiseOffset + frameCount * this.jitterSpeed) - 0.5) * this.jitterAmt
       : 0;
@@ -134,10 +152,10 @@ export class Ring {
       ellipse(0, 0, r2j * 2);
       ellipse(0, 0, r3j * 2);
 
-      // 三个环区块
-      this.drawRegionRel(this.r0,  r1j, this.fillStyles[0], this.currentColor, this.patternColors[0]);
-      this.drawRegionRel(r1j,      r2j, this.fillStyles[1], this.currentColor, this.patternColors[1]);
-      this.drawRegionRel(r2j,      r3j, this.fillStyles[2], this.currentColor, this.patternColors[2]);
+      // 三个环区块（背景色用 renderColor）
+      this.drawRegionRel(this.r0, r1j, this.fillStyles[0], renderColor, this.patternColors[0]);
+      this.drawRegionRel(r1j,   r2j, this.fillStyles[1], renderColor, this.patternColors[1]);
+      this.drawRegionRel(r2j,   r3j, this.fillStyles[2], renderColor, this.patternColors[2]);
 
       // 曲线装饰
       if (this.hasCurve) {
