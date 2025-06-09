@@ -1,43 +1,103 @@
 // src/Ring.js
 
+// —— 1. 定义你的渐变调色板 ——  
+// 环的背景色会在这几个颜色里平滑过渡
+const RING_COLORS = [
+  '#FAAF19', '#FFDE9A', '#CEB3D8', '#E8272D',
+  '#24376B', '#00AC2E', '#000000', '#FFFFFF'
+];
+
 export class Ring {
+  /**
+   * @param {object} cfg
+   * @param {number} cfg.x
+   * @param {number} cfg.y
+   * @param {number} cfg.r1
+   * @param {number} cfg.r2
+   * @param {number} cfg.r3
+   * @param {string[]} cfg.fillStyles      // ['zigzag','dots','layered']
+   * @param {string[]} cfg.bgColors        // 背景色 hex 数组
+   * @param {Array<string|string[]>} cfg.patternColors
+   * @param {boolean} cfg.hasCurve
+   * @param {number}  cfg.angle
+   * @param {number} [cfg.colorSpeed]      // 可选：统一渐变速度
+   */
   constructor(cfg) {
+    // — 基础定位和半径 —
     this.x  = cfg.x;
     this.y  = cfg.y;
-
-    // r0 is fixed; r1–r3 are loaded from cfg
-    this.r0 = 6;
+    this.r0 = 6;               // 最顶小圆半径固定
     this.r1 = cfg.r1;
     this.r2 = cfg.r2;
     this.r3 = cfg.r3;
 
+    // — 原有样式配置 —
     this.fillStyles    = cfg.fillStyles;
-    // Colors are stored as hex strings and converted to p5.Color in display()
     this.bgColors      = cfg.bgColors.map(hex => color(hex));
     this.patternColors = cfg.patternColors.map(layer => {
       return Array.isArray(layer)
         ? layer.map(hex => color(hex))
         : color(layer);
     });
-
     this.hasCurve = cfg.hasCurve;
     this.angle    = cfg.angle;
+
+    // — 动态渐变色状态 —  
+    // 随机初始进度（0~1），打乱同步
+    this.transitionProgress = random(0, 1);
+    // 随机速度（0.005~0.02）或使用统一 cfg.colorSpeed
+    this.transitionSpeed    = cfg.colorSpeed || random(0.005, 0.02);
+    // 初始 current 和 target
+    this.currentColor = color(random(RING_COLORS));
+    this.targetColor  = color(random(RING_COLORS));
   }
 
+  /** 每帧调用：推进并更新 currentColor */
+  updateColor() {
+    // ① 线性插值
+    this.currentColor = lerpColor(
+      this.currentColor,
+      this.targetColor,
+      this.transitionProgress
+    );
+    // ② 推进过渡进度
+    this.transitionProgress += this.transitionSpeed;
+    // ③ 完成一次过渡后，固定成目标色，选下一个
+    if (this.transitionProgress >= 1) {
+      this.currentColor = this.targetColor;
+      let next;
+      do {
+        next = color(random(RING_COLORS));
+      } while (next.toString() === this.targetColor.toString());
+      this.targetColor        = next;
+      this.transitionProgress = 0;
+    }
+  }
+
+  /** 每帧调用：除颜色外若有其他更新也可加在这里 */
+  update() {
+    this.updateColor();
+    // 如果你还想让半径或角度受噪声／交互影响，可在这里拓展
+  }
+
+  /** 绘制整个 Ring */
   display() {
+    // —— 先更新状态 —— 
+    this.update();
+
     noStroke();
     noFill();
-    // Draw three base ellipse
+    // 画三条“基准”同心圆（无色，仅占位）
     ellipse(this.x, this.y, this.r1 * 2);
     ellipse(this.x, this.y, this.r2 * 2);
     ellipse(this.x, this.y, this.r3 * 2);
 
-    // Draw the three regions in sequence
-    this.drawRegion(this.r0, this.r1, this.fillStyles[0], this.bgColors[0], this.patternColors[0]);
-    this.drawRegion(this.r1, this.r2, this.fillStyles[1], this.bgColors[1], this.patternColors[1]);
-    this.drawRegion(this.r2, this.r3, this.fillStyles[2], this.bgColors[2], this.patternColors[2]);
+    // —— 背景环区用动态色 —— 
+    this.drawRegion(this.r0, this.r1, this.fillStyles[0], this.currentColor, this.patternColors[0]);
+    this.drawRegion(this.r1, this.r2, this.fillStyles[1], this.currentColor, this.patternColors[1]);
+    this.drawRegion(this.r2, this.r3, this.fillStyles[2], this.currentColor, this.patternColors[2]);
 
-    // Curve decoration
+    // —— 曲线装饰（若开启） —— 
     if (this.hasCurve) {
       push();
         translate(this.x, this.y);
@@ -55,12 +115,20 @@ export class Ring {
       pop();
     }
 
-    // Draw the topmost small circle
+    // —— 最顶小圆 —— 
     noStroke();
     fill(230);
     ellipse(this.x, this.y, this.r0 * 2);
   }
 
+  /**
+   * 在两半径间绘制“甜甜圈”区块并叠加 pattern
+   * @param {number} iR   内半径
+   * @param {number} oR   外半径
+   * @param {string} style 'zigzag' | 'dots' | 'layered'
+   * @param {p5.Color} bg    背景色
+   * @param {p5.Color|p5.Color[]} pc 图案色
+   */
   drawRegion(iR, oR, style, bg, pc) {
     noStroke();
     fill(bg);
@@ -71,19 +139,21 @@ export class Ring {
     else if (style === 'layered')  this.drawLayeredRings(iR, oR, pc);
   }
 
+  /** 绘制环状填充（甜甜圈） */
   drawDonut(iR, oR) {
     beginShape();
       for (let a = 0; a < TWO_PI; a += 0.05) {
         vertex(this.x + oR * cos(a), this.y + oR * sin(a));
       }
-    beginContour();
+      beginContour();
       for (let a = TWO_PI; a > 0; a -= 0.05) {
         vertex(this.x + iR * cos(a), this.y + iR * sin(a));
       }
-    endContour();
+      endContour();
     endShape(CLOSE);
   }
 
+  /** 锯齿环（stroke） */
   drawZigzagRing(iR, oR, steps, col) {
     let off = 5;
     stroke(col);
@@ -98,11 +168,13 @@ export class Ring {
     endShape(CLOSE);
   }
 
+  /** 分层同心圈（stroke） */
   drawLayeredRings(iR, oR, baseColors) {
     let cnt  = 14;
     let pool = [...baseColors];
     while (pool.length < cnt) pool.push(random(baseColors));
     shuffle(pool, true);
+
     noFill();
     strokeWeight(3);
     for (let i = 0; i < cnt; i++) {
@@ -113,6 +185,7 @@ export class Ring {
     }
   }
 
+  /** 点环（fill） */
   drawDotsRing(rMin, rMax, cnt, col) {
     fill(col);
     noStroke();
