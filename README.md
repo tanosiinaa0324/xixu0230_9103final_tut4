@@ -8,7 +8,21 @@
 
 ## 2. 交互说明 / How to Use
 
-- <!-- 这里填写：如何与作品互动、操作指引、如何让动画“活起来” -->
+**中文（Chinese）**  
+加载页面后，520×520 的画布会立即出现并自动开始循环动画。作品包含三部分：  
+- **渐变环形**：基于 `Ring.js` 提供的多层渐变与点状填充，构建平滑的背景环。  
+- **旋转椭圆**：在 `ellipsePattern.js` 中，椭圆绕各自中心旋转，每个椭圆约 10 秒完成一圈。  
+- **脉动圆圈**：在 `circlePattern.js` 中，圆圈使用 Perlin 噪声与随机 HSB 颜色脉动，每次脉动周期约 5 秒。  
+
+动画持续循环，无需任何用户交互；如需体验新的随机效果，只需刷新页面。
+
+**English**  
+Upon loading the page, a 520×520 canvas appears and the animation loops automatically. The sketch comprises three parts:  
+- **Gradient Rings**: Smooth layered rings with fills and patterns from `Ring.js`.  
+- **Rotating Ellipses**: In `ellipsePattern.js`, ellipses rotate around their centers, completing a full revolution in about 10 seconds.  
+- **Pulsating Circles**: In `circlePattern.js`, circles driven by Perlin noise and random HSB colors pulsate, completing one cycle in about 5 seconds.  
+
+The animation runs continuously with no interaction required. To see a new random variation, simply reload the page.  
 
 ---
 

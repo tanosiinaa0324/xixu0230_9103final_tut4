@@ -49,7 +49,7 @@ function draw() {
     r.r1 = ringBaseSizes[i].r1 + n * 40;
     r.r2 = ringBaseSizes[i].r2 + n * 60;
     r.r3 = ringBaseSizes[i].r3 + n * 80;
-    // Ring 内部会自动 updateColor() & display()
+    // Ring 内部会自动 updateColor() & display()（含悬停逻辑）
     r.display();
   });
 
