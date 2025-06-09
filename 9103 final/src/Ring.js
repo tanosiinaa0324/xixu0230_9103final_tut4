@@ -3,8 +3,8 @@
 // —— 1. 定义你的渐变调色板 ——  
 // 环的背景色会在这几个颜色里平滑过渡
 const RING_COLORS = [
-  '#FAAF19', '#FFDE9A', '#CEB3D8', '#E8272D',
-  '#24376B', '#00AC2E', '#000000', '#FFFFFF'
+  '#FAAF19', '#FFDE9A', 
+  '#CEB3D8', '#FFFFFF'
 ];
 
 export class Ring {

@@ -25,7 +25,7 @@ function setup() {
   rings = ringConfigs.map(cfg => new Ring({
     ...cfg,
     // 可选覆盖渐变速度，比如 0.015
-    // colorSpeed: cfg.colorSpeed ?? 0.02
+    // colorSpeed: cfg.colorSpeed ?? 0.005
   }));
   ringBaseSizes  = extractRingBaseSizes(rings);
   ringNoiseSeeds = initNoiseSeeds(rings);
@@ -40,7 +40,7 @@ function setup() {
 }
 
 function draw() {
-  background('#2e4760');
+  background('#FFCD41');
 
   // —— 更新 & 绘制 Rings ——  
   rings.forEach((r, i) => {
