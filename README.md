@@ -15,6 +15,7 @@ _Original: Wheels of Fortune by Pacita Abad_
 While the original quilted piece evokes celebration through vivid color rhythms, my digital reinterpretation detaches these motifs from fabric and human touch. Once translated into code and digital space, these visuals cease to be decorative—they become **simulacra of living organisms**. They morph into nameless microorganisms that divide, swell, and pulse with a logic foreign to human understanding.
 
 ![Code Interpretation](assets/Original.JPG)
+_The image after redrawing with code_
 
 This is not a wheel powered by gears. This is a recursive, squirming spindle of fate—**the Spindle of Dread**. Inspired by Plato’s *Spindle of Necessity* which governed cosmic order, this version strips away rationality, emerging instead as a visceral, chaotic, and quasi-biological entity.
 
@@ -126,6 +127,7 @@ My reinterpretation—**Spindle of Dread**—imagines fate as:
 - Uncanny beings with systemic, non-human logic
 
 ![Seraph Reference](assets/Seraph.GIF)
+_Republished by rednote user 9506977597, http://xhslink.com/a/2jhVTVX30QCeb_
 
 #### From Anime:
 - *Puella Magi Madoka Magica*: Magical space aesthetic
