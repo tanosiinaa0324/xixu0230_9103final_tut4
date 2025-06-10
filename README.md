@@ -58,8 +58,8 @@ These micro-responses lend the work a lifelike presence, reflecting the instabil
 ## 3. 个人动画实现思路 / My Animation Approach
 
 - <!-- 你是如何基于小组代码构思实现动画的方法的？你的总体策略是什么？ -->
-首先在编写小组代码的时候我们一开始是没有进行模块化的。因此在这个阶段我认为我应该先将它重新整理，模块化以适应我的动画设计。
-然后关于“类生物的节律感”可以用Perlin Noise改变Ring、Circle的的半径来实现，而Ellipse部分则是用Noise来让它们波动，模仿细胞内结构的运动方式。Random主要用于随机改变图像的颜色。考虑到这幅画的颜色鲜艳且丰富，如果让颜色完全随机可能会导致画面杂乱，因此必需限制它在几个颜色之间随机切换。
+- 首先在编写小组代码的时候我们一开始是没有进行模块化的。因此在这个阶段我认为我应该先将它重新整理，模块化以适应我的动画设计。
+- 然后关于“类生物的节律感”可以用Perlin Noise改变Ring、Circle的的半径来实现，而Ellipse部分则是用Noise来让它们波动，模仿细胞内结构的运动方式。Random主要用于随机改变图像的颜色。考虑到这幅画的颜色鲜艳且丰富，如果让颜色完全随机可能会导致画面杂乱，因此必需限制它在几个颜色之间随机切换。
 ---
 
 ## 4. 动画驱动方式 / Animation Driver
@@ -110,14 +110,14 @@ Subjective Perception and Conceptual Development
 
 当我第一次观察原作并以代码重绘时，我并没有把它看作“命运的装置”或节庆的轮盘，而是感受到它更像一团细胞状、有机体般的聚合体。色彩的饱和、构图的密集、图形的重复让我联想到微生物、毒蘑菇、海洋软体生物等充满张力的自然生命体。
 
-![预览图](assets/microorganism.gif)
-![预览图](assets/microorganism2.gif)
+![预览图](assets/microorganism.GIF)
+![预览图](assets/microorganism2.GIF)
 
 ✿ 从“生物感”到“不安”：色彩与运动的转化
 
 这种“不安”令我进一步联想到了一些有名的3D怪物创作，例如德国的艺术家Jonas Pfeiffer根据《圣经》的原文所“复原”的座天使。
 
-![预览图](assets/Seraph.gif)
+![预览图](assets/Seraph.GIF)
 
 这一形象彻底颠覆了传统宗教绘画中对天使的认知，将原本神圣温柔的存在转化为一种全然非人、甚至令人畏惧的生命结构。它不再具备人类的面孔与情感，而更像一种遥远的系统性存在——如同我们无法理解的程序、命令、命运本身。
 
