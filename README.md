@@ -2,12 +2,21 @@
 Spindle of Dread
 ——基于Pacita Abad《Wheels of Fortune》的互动再构
 
+![预览图](assets/Final.GIF)
+Preview of Final Effect
+
 ## 1. 作品简介 / Description
 
-<!-- 简要介绍你的作品，整体功能和动画效果 -->
+<!-- 简要介绍我的作品，整体功能和动画效果 -->
 在Pacita Abad《Wheels of Fortune》斑斓而狂乱的色块中，我初次看见的不是节日，而是生物。不是祈愿之轮，而是命运的组织体——细胞状、呼吸着、挣扎着的某种东西。
 
+![预览图](assets/%20WheelsOfFortune.jpg)
+Original work: Wheels of Fortune by Pacita Abad
+
 原作使用缤纷色彩缝合出强烈的视觉节奏，但在重绘过程中，我逐渐脱离了原有的庆典语境，开始意识到：当这些图案脱离布面、脱离手工的温度，转而进入数字平面与代码算法的运算时，它们不再是图案，而成为了某种“拟态生命体”。它们仿佛一群无法被命名的微生物，在屏幕上不断分裂、膨胀、呼吸着未知的逻辑。
+
+![预览图](assets/Original.JPG)
+The code-generated reinterpretation of Wheels of Fortune
 
 这是一台不是由齿轮构成的“命运之轮”，而是一枚在暗中蠕动、反复旋转的**“恐惧纺锤（Spindle of Dread）”**——它呼应了柏拉图笔下那枚控制宇宙命运的Spindle of Necessity，却早已褪去理性与秩序的外衣，成为一个渗透着生理性与混沌感的异质装置。
 
@@ -28,53 +37,94 @@ Spindle of Dread
 
 ## 2. 交互说明 / How to Use
 
-加载页面后，520×520 的画布会立即出现并自动开始循环动画。作品包含三部分：
-Upon loading the page, a 520×520 canvas appears and the looping animation begins automatically. The work consists of three main parts:
+Upon loading the page, users will immediately see a 520×520 canvas where the animation begins playing in a seamless loop. No clicks or input are required to start.
 
-渐变环形 / Gradient Rings：基于 Ring.js 提供的多层渐变与点状填充，构建平滑的背景环。
-Created using multi-layered gradients and point-like fills from Ring.js, forming soft concentric rings in the background.
-旋转椭圆 / Rotating Ellipses：在 ellipsePattern.js 中，椭圆绕各自中心旋转，每个椭圆约 10 秒完成一圈。
-Ellipses from ellipsePattern.js rotate around their centers, each taking about 10 seconds per full rotation.
-脉动圆圈 / Pulsing Circles：在 circlePattern.js 中，圆圈使用 Perlin 噪声与随机 HSB 颜色脉动，每次脉动周期约 5 秒。
-Circles in circlePattern.js pulse rhythmically using Perlin noise and random HSB color shifts, with each cycle lasting around 5 seconds.
-动画持续循环，无需任何用户交互；如需体验新的随机效果，只需刷新页面。
-The animation loops continuously without user input; refresh the page to generate a new random variation.
+The animated experience features:
 
-🖱️ 鼠标悬停交互 / Hover Interaction
-当用户将鼠标悬停在任意图案上时，会触发一系列“拟生物反应”：
-When the user hovers the cursor over any shape, it triggers a series of “pseudo-biological responses”:
+- Soft concentric rings rendered with smooth gradient transitions
 
-图案收缩 / Shape Contraction：该图案会立刻使用 lerp() 函数平滑缩小，仿佛生物感知到威胁并蜷缩自身。
-The shape smoothly contracts using lerp(), simulating a creature curling in response to perceived danger.
-颜色变化 / Color Shift：被悬停的图案颜色变为深蓝、深紫等冷色，模拟失氧或“屏息”的状态。
-The hovered shape changes to deep blues and purples, evoking a sensation of suffocation or decay.
-不规则抖动 / Irregular Twitching：如鼠标持续悬停，图案会出现轻微抖动，呈现出“痉挛”般的连续反应。
-With prolonged hover, the shape starts to tremble irregularly, suggesting spasmodic or nervous response.
-这些微观反应为作品赋予了近乎生命的特质，也映射出命运本身的不稳定与敏感性。
-These micro-responses lend the work a lifelike presence, reflecting the instability and sensitivity of fate itself.
+- Elliptical shapes rotating slowly around their own centers
+
+- Circular forms that pulse rhythmically in size and color
+
+These visual elements operate in continuous cycles, creating a layered, meditative motion environment.
+
+🖱️ Interactive Response to User Hover
+
+Users can move the mouse cursor over any shape on the canvas to trigger subtle, lifelike responses:
+
+Shape contraction: The hovered element will gradually shrink, as if reacting to contact or threat.
+
+Color shift: Its hue will shift to cooler tones (e.g., deep blue or violet), suggesting tension or withdrawal.
+
+Slight twitching: Prolonged hover may cause a trembling motion, resembling an involuntary spasm or pulse.
+
+These responses simulate pseudo-biological behaviors, inviting users to explore the fragile, reactive nature of the system.
+
+To experience new randomized visual outputs, users can simply refresh the page — each reload generates a distinct version of the animation.
 
 ---
 
 ## 3. 个人动画实现思路 / My Animation Approach
 
-- <!-- 你是如何基于小组代码构思实现动画的方法的？你的总体策略是什么？ -->
-- 首先在编写小组代码的时候我们一开始是没有进行模块化的。因此在这个阶段我认为我应该先将它重新整理，模块化以适应我的动画设计。
-- 然后关于“类生物的节律感”可以用Perlin Noise改变Ring、Circle的的半径来实现，而Ellipse部分则是用Noise来让它们波动，模仿细胞内结构的运动方式。Random主要用于随机改变图像的颜色。考虑到这幅画的颜色鲜艳且丰富，如果让颜色完全随机可能会导致画面杂乱，因此必需限制它在几个颜色之间随机切换。
+At the beginning of the group project, all visual elements were written together in sketch.js without modular structure. When transitioning into my individual work, the first thing I did was reorganize the codebase. I modularized the program by separating the Ring, Circle, and Ellipse logic into independent files. This allowed me to customize their animation behaviors independently and iterate more efficiently during the design process.
+
+✨ Rhythm and Organic Motion
+To simulate a life-like rhythmic effect, I leveraged Perlin noise in multiple ways:
+
+- Radius fluctuation: Both Rings and Circles use noise() to smoothly increase and decrease their size over time—mimicking breathing or pulse-like movement.
+- Angular perturbation: Ellipses use noise to distort their rotation angles, creating gentle, irregular oscillations that resemble the internal motion of cellular structures.
+- Jitter and distortion: For Ring petals, I also used noise to add jitter to the angles and radii, adding complexity to the visual pattern.
+
+🎨 Controlled Randomness
+To enrich the animation, I used random() to dynamically change colors. However, to avoid overwhelming the composition with chaos, I limited the random selection to a curated color palette. This ensures the overall aesthetic remains vibrant but visually coherent.
+
+⚙️ Techniques and Algorithms
+Some of the techniques I implemented or plan to use include:
+
+- lerpColor() for smooth color gradients across the Rings
+- clamp() to restrict radius or angle values within a safe range
+- map() to remap noise values into usable visual parameters
+- Class-based encapsulation to support scalability and visual layering
+- randomSeed() for test reproducibility when needed
+
+🧭 Design Sequence
+
+- Restructure the code for clarity and separation of logic
+- Animate shape properties using Perlin noise and randomness
+- Test each module independently (Ring, Circle, Ellipse)
+- Balance color and motion by fine-tuning the value ranges
+- Layer all components into a unified visual composition
+
+🚀 Future Direction: Interaction
+In the next stage, I plan to introduce user interaction to enhance the dynamic quality of the sketch. For example, mouse position could influence the speed of rotation, or clicking could switch between different color themes or ring behaviors. This will add a reactive, real-time layer to the artwork and make it feel more immersive and responsive.
+
 ---
+
 
 ## 4. 动画驱动方式 / Animation Driver
 
-- 驱动方式：<!-- （请选择一项：音频 / 用户交互 / Perlin 噪声 / 时间 / 其它） -->
-- Perlin Noise
-- 因为我想要模拟生物感，而Perlin Noise是最合适的。
-- 简要说明为什么选用这种方式。
+我选择的part：Perlin noise and randomness.
+
+In my animation, I intentionally combined Perlin noise and random values to take advantage of their contrasting characteristics. Perlin noise offers smooth, continuous variations—perfect for creating organic, flowing movements like pulsing sizes or gentle rotation. On the other hand, random() introduces sharp, unpredictable changes that are ideal for dynamic elements such as color flickers or sudden visual contrast.
+
+By blending both techniques, I was able to simulate motion that feels natural but still lively and surprising. For example, I used Perlin noise to modulate the radius and angle of rings, creating a "breathing" or "spinning" effect, while using random colors to add rhythm and visual variety. This dual approach allowed me to avoid monotony while still maintaining aesthetic coherence.
+
+Additionally, by seeding randomness (randomSeed()), I could ensure reproducibility during testing while keeping the animation visually rich and unpredictable in the final output.
 
 ---
 
 ## 5. 动画的属性与独特性 / Animated Properties & Uniqueness
 
-- 参与动画的图像属性有哪些？（如颜色、尺寸、位置、透明度等）
-- 你的动画如何体现独特性，与组员有何区别？主要是利用Perlin Noise和Random改变图像颜色和大小
+What makes my animation distinct from my group members’ work is the way I use both Perlin noise and randomness to simulate a sense of biological liveliness. Instead of static or purely reactive shapes, my elements feel as if they are “breathing” or subtly pulsating, like organic forms.
+
+Specifically:
+
+- I use Perlin noise to modulate the radius of Rings and Circles, as well as to offset the angle of Ellipses, creating fluid, rhythmic movement.
+- I apply random color changes within a curated palette, adding visual diversity while avoiding chaos.
+- The combination of these two techniques allows the shapes to appear alive—not only moving, but evolving—subtly shifting their size, orientation, and hue over time.
+
+This approach emphasizes soft, continuous transformation, giving my animation a more organic and immersive character compared to designs driven by static values or fixed interactions.
 
 ---
 
@@ -136,46 +186,135 @@ Subjective Perception and Conceptual Development
 ✿ 联想深化：命运也是生物体
 
 我逐渐意识到，这种反应机制本身就是一种命运的拟态表达：
-命运不再是冷冰冰的轮盘或数学函数，而是一种具有反应性、被凝视即变形的生命体。它会回应你，会呼吸，会恐惧。甚至在某种意义上，
+命运不再是冷冰冰的轮盘或数学函数，而是一种具有反应性、被凝视即变形的生命体。它会回应你，会呼吸，会恐惧。甚至在某种意义上“不是我们在畏惧命运，而是命运也在畏惧我们”。
 
-“不是我们在畏惧命运，而是命运也在畏惧我们。”
 这种共生性的“恐惧生态”构成了我作品的核心意象，也是《Spindle of Dread》命名与逻辑体系的出发点。
 
 ---
 
 ## 7. 技术实现说明 / Technical Explanation
 
-- 动画的实现思路（可简要带伪代码/流程图）
-- 主要算法或技术点
-- 相关参考文献或资料链接（如有）
+Overall Workflow
+
+1. Load shape data → 读取静态图形数据（circle, ellipse, ringConfigs）
+2. Initialize visual elements → 初始化动画参数与颜色池
+3. Per frame (draw loop):
+   - Render background elements
+   - Animate ellipses (rotation via noise)
+   - Animate circles (radius via noise)
+   - Animate rings (jitter, gradient fill, smooth morphing)
+  
+Main Animation Strategy / 核心动画策略：
+   - Use Perlin noise to control rotation angles, jitter, and radii → creates smooth organic motion
+   - Use random() to assign colors dynamically to keep the visuals vibrant
+   - Use trigonometric functions (sin, cos) to draw radial/petal patterns
+   - Encapsulate complex motion (like ring halo animations) in custom classes (Ring)
+  
+Animation Logic Overview
+
+// 初始化
+载入图形数据：椭圆点 ellipseData[], 圆圈点 circlesData[], Ring 配置 ringConfigs[]
+创建 Ring / Ellipse / Circle 等类实例并保存到数组中
+
+// setup()
+设置画布、颜色模式、绘图样式
+对每个图形对象赋初始噪声种子、颜色、大小等属性
+
+// draw()
+清空背景
+
+遍历所有图形对象，依次执行：
+  - 计算当前帧数 frameCount
+  - 用 Perlin Noise 控制：
+      - 圆圈的半径变化（呼吸感）
+      - 椭圆的角度偏移（旋转感）
+      - Ring 的半径 jitter / angle / noise 曲线（花瓣形变）
+  - 用 Random 选择新的颜色填充（颜色跳动）
+  - 调用每个对象的 display() 函数绘制到屏幕上
+
+// 每个 display() 函数内部流程
+  根据图形类型绘制圆形、椭圆或环形
+  应用颜色渐变、旋转、半径扰动等动画效果
+
+Key Algorithms and Techniques Used
+
+| Technique | Purpose | Effect |
+|-----------|---------|--------|
+| **Perlin Noise** | Controls size fluctuation, angle variation, and position jitter of shapes (especially rings) | Creates smooth, continuous "breathing" animations and avoids abrupt transitions |
+| **Random() function** | Dynamically changes fill colors | Enhances the randomness and richness of the animation |
+| **Trigonometric functions (sin/cos)** | Used to draw polar-based shapes (e.g. petals, rings, rotating ellipses) | Produces regular radial or rotational motion effects |
+| **lerpColor() color interpolation** <br>*(Suggested by ChatGPT)* | Generates smooth color gradients for animated rings | Creates a flowing sense of light and spatial depth |
+| **Modular class structure** <br>(Ring / EllipsePattern / CirclePattern) | Encapsulates the behavior of each shape type | Makes the code easier to scale, reuse, and debug; each class handles its own animation logic |
+| **Multi-layer rendering and overlay** | Draws multiple types of graphics on the same canvas | Adds depth and complexity to the visual output |
 
 ---
 
 ## 8. 组代码的修改 / Changes to Group Code
 
-- 你对小组公共代码做了哪些修改？为什么？
-- 我将它按照自己的需求模块化了。原先绘制的时候图案分组已经比较明确，但我进一步把ellipse、circle和ring分开，这样更方便我进行动画效果设置和迭代。
-- 以及我删除了原本代码中的/no loop来让图案被循环重绘，这样可以让我的Ring有那种”高速旋转“的效果。
-- 
+* When I started working on the individual assignment, our group’s shared code had everything written in a single `sketch.js` file. So I modularized the code based on my own needs. The original structure already grouped the patterns to some extent, but I went a step further and separated the ellipses, circles, and rings into different files. This made it much easier for me to apply animations and iterate on their behavior.
+
+* I also removed the `noLoop()` function from the original code to allow continuous redrawing. This change enables my rings to create a "high-speed spinning" effect.
 
 ---
 
 ## 9. 课外工具与技术 / External Tools & Techniques
 
-- 你用到哪些课程外的库、工具、算法？为什么选择它们？它们原理是什么？
-- Lerp。
+1. lerpColor() – Color Interpolation (Beyond the Course Scope)
+Although lerp() (linear interpolation) is a commonly used technique, in this project I specifically used p5.js’s lerpColor() function to create smooth color transitions. This method wasn’t part of the original course code and was introduced to me through a suggestion from ChatGPT.
 
----
+✨ Why I Chose It
+I wanted the rotating ring shapes (Ring objects) to display a smooth color gradient that resembled a glowing or energetic aura. Using random() to switch colors resulted in sudden, jarring changes. In contrast, lerpColor() allowed for continuous, fluid transitions between colors, producing a more natural and visually appealing animation.
 
-## 10. 网络引用说明 / Online References
+⚙️ How It Works
+The function lerpColor(c1, c2, amt) calculates a color somewhere between c1 and c2 based on amt, a value between 0.0 and 1.0. Internally, it performs linear interpolation on each individual color channel (such as HSB or RGB), producing a smooth blend.
 
-- 复制或参考的网络资源/教程/代码段有哪些？它们是怎么实现的？为什么要用？给出链接。
+Formula: result = (1 - amt) * c1 + amt * c2 (applied to each channel)
 
----
+🧪 Example Code
 
-## 11. 致谢 / Acknowledgements
+![预览图](assets/LerpColorSample.png)
 
-- <!-- 可以感谢灵感来源、参考项目、协助的同学等 -->
+🎨 In my actual Ring class, I applied this same technique to transition between multiple colors as the ring rotates, enhancing the sense of motion and depth.
 
----
+2. clamp() – Value Bounding Function (Custom Utility)
+The clamp() function is a simple yet essential mathematical utility that restricts a value to lie within a specified range. I used this in my animation logic to prevent properties such as radii, angles, and noise-influenced values from going beyond meaningful bounds. This code is also from ChatGPT.
+
+✨ Why I Chose It
+When working with dynamic values—especially those driven by Perlin noise or random functions—it's easy for parameters to exceed the expected visual range, resulting in shapes that are too large, too distorted, or even invisible. By applying clamp(), I ensured that all animation inputs stayed within safe, aesthetic limits.
+
+⚙️ How It Works
+clamp(value, min, max) returns min if value is below the minimum, max if it's above the maximum, and the value itself if it lies within the range. This guarantees that the result always remains within [min, max].
+
+Formula:
+If value < min, return min
+If value > max, return max
+Otherwise, return value
+
+🧪 Example Code
+
+![预览图](assets/ClampSample.png)
+
+🔧 In my Ring and CirclePattern modules, I used clamp() to restrict radius growth and avoid extreme jitter, preserving visual harmony even under animated transformations.
+
+## 10. 作品迭代 / External Tools & Techniques
+
+1. 第一次上传的时候我仅尝试了自动动画。
+
+![预览图](assets/Iteration1.GIF)
+
+在用户测试中，我发现原作的墨蓝色背景虽然强化了压迫感，但也导致部分观众感到过度不适。于是我将背景改为明亮的中黄色，并优化了颜色池中饱和度过高的选项，删除了可随机的颜色中那些不和谐的颜色。这样调整后，整体画面更具活力，色彩也更接近热带毒菌或深海生物的“鲜艳警示”状态。不安感没有被削弱，反而因伪装在“活泼色彩”之下的痉挛与退缩反应，变得更加隐蔽和真实。
+
+与此同时，我意识到，仅仅以旁观者的角度观看动画显得略显单调。由于用户无法干涉这些“生物”的行为，它们反而更像是在执行预设程序，缺乏生命应有的感知与反应。因此，我决定引入一项简单的用户交互机制，以打破这种“机械感”。
+
+具体做法是：当用户将鼠标悬停在任意一个 Ring 上时，该图形会立即收缩，模拟出生物在受到触碰或惊扰时本能的退缩反应。
+
+2. 第二次迭代中，我为作品加入了鼠标悬停（hover）交互机制。
+
+![预览图](assets/Iteration2.GIF)
+
+但我很快意识到，Ring仅仅在悬停时发生收缩虽然营造出一种仿佛生物痉挛般的动态效果，但情绪表达仍然不够强烈。为了进一步强化视觉与情感的冲击力，我决定结合 random() 和 lerpColor()，让Ring在收缩的同时产生颜色变化，逐渐转向深蓝或深紫。这种颜色变化模拟了“窒息”与“濒死”的感受，增强了作品所传达的不安的氛围。
+
+3. 第三次迭代后就是我的个人作品的最终效果、
+
+![预览图](assets/Final.GIF)
 
