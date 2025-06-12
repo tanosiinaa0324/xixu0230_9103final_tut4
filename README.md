@@ -219,6 +219,29 @@ This ensures that the output always stays inside `[min, max]`.
 #### 🔧 Real Use Case
 In both the `Ring` and `CirclePattern` modules, I used `clamp()` to limit radius growth and suppress excessive jitter. This helped maintain compositional balance even under intense motion or transformation.
 
+### 3. `map()` – Value Remapping Utility 
+
+The `map()` function is a core p5.js utility that linearly transforms a number from one range to another. I use it extensively to convert Perlin noise outputs, frame counts, and input values into meaningful visual parameters. This function was also generated with the help of ChatGPT.
+
+#### ✨ Why I Chose It
+Raw values—from noise, angles, or user input—often don’t match the coordinate or color ranges you need for drawing. By remapping these values, I can flexibly drive radii, hues, rotation speeds, and more without hard-coding magic numbers.
+
+#### ⚙️ How It Works
+`map(value, start1, stop1, start2, stop2)` returns a linearly remapped value:
+- When `value` equals `start1`, returns `start2`
+- When `value` equals `stop1`, returns `stop2`
+- Otherwise returns `(value – start1) / (stop1 – start1) * (stop2 – start2) + start2`
+
+This ensures that when `value` equals `start1`, the result is `start2`; when `value` equals `stop1`, the result is `stop2`; and everything in between interpolates linearly.  
+
+#### 🧪 Example Code
+
+![Preview](assets/mapSample.png)
+
+#### 🔧 Real Use Case
+In the Ring class, I map noise outputs to smooth scale factors, producing a breathing effect between 0.98× and 1.02× base size.
+In ellipsePattern.js, I remap noise to rotation angles (0 → 2π), creating continuous, organic motion.
+In circlePattern.js, I convert noise to stroke weights and dot counts for a natural pulsing texture.
 ---
 
 ## 10. 🔁 Iterative Development & Refinement
