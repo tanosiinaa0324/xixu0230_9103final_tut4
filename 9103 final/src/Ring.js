@@ -1,6 +1,6 @@
 // src/Ring.js
 
-// —— 环颜色渐变池 ——  
+// RING_COLORS — color palette for ring gradients
 const RING_COLORS = [
   '#FAAF19',
   '#FFDE9A',
@@ -10,27 +10,11 @@ const RING_COLORS = [
 
 export class Ring {
   /**
-   * @param {object} cfg
-   * @param {number} cfg.x
-   * @param {number} cfg.y
-   * @param {number} cfg.r1
-   * @param {number} cfg.r2
-   * @param {number} cfg.r3
-   * @param {string[]} cfg.fillStyles
-   * @param {string[]} cfg.bgColors
-   * @param {Array<string>|string} cfg.patternColors
-   * @param {boolean}  cfg.hasCurve
-   * @param {number}   cfg.angle
-   * @param {number}  [cfg.colorSpeed]
-   * @param {number}  [cfg.noiseScaleSpeed]
-   * @param {number}  [cfg.jitterSpeed]
-   * @param {number}  [cfg.jitterAmt]
-   * @param {number}  [cfg.scaleSmooth]     // 新增：缩放平滑系数，0～1
-   * @param {string}  [cfg.hoverColor]      // 新增：悬停过渡到的颜色
-   * @param {number}  [cfg.hoverBlendSpeed] // 新增：颜色过渡速率，0～1
+   * constructor — ring initialization algorithm
+   * Purpose: Set up position, three radii, colors, noise seeds, jitter and scale parameters, and hover transition state
    */
   constructor(cfg) {
-    // — 基本定位与半径 —  
+    // — Position and base radii —  
     this.x  = cfg.x;
     this.y  = cfg.y;
     this.r0 = 6;
@@ -38,9 +22,9 @@ export class Ring {
     this.r2 = cfg.r2;
     this.r3 = cfg.r3;
 
-    // — 样式配置 —  
+    // — Style configuration —  
     this.fillStyles    = cfg.fillStyles;
-    this.bgColors      = cfg.bgColors.map(h => color(h));
+    this.bgColors      = cfg.bgColors.map(h => color(h));    
     this.patternColors = cfg.patternColors.map(h =>
       Array.isArray(h)
         ? h.map(c => color(c))
@@ -49,39 +33,42 @@ export class Ring {
     this.hasCurve = cfg.hasCurve;
     this.angle    = cfg.angle;
 
-    // — 渐变色动态状态 —  
-    this.transitionProgress = random();
+    // — Gradient color state —  
+    this.transitionProgress = random();                       
     this.transitionSpeed    = cfg.colorSpeed || random(0.005, 0.02);
-    this.currentColor       = color(random(RING_COLORS));
-    this.targetColor        = color(random(RING_COLORS));
+    this.currentColor       = color(random(RING_COLORS));     
+    this.targetColor        = color(random(RING_COLORS));     
 
-    // — 悬停检测 —  
-    this.isHovered = false; // 这个方法来自于询问ChatGPT
+    // — Hover detection —  
+    this.isHovered = false;
 
-    // — 呼吸（scale）噪声 —  
+    // — Breathing (scale) noise —  
     this.scaleNoiseOff   = random(1000);
     this.noiseScaleSpeed = cfg.noiseScaleSpeed || 0.005;
 
-    // — 抖动配置 —  
+    // — Jitter settings —  
     this.jitterSpeed = cfg.jitterSpeed || 0.2;
     this.jitterAmt   = cfg.jitterAmt   || 24;
 
-    // — 缩放平滑状态 —  
+    // — Smooth scale state —  
     this.currentScale = 1;
-    this.scaleSmooth  = cfg.scaleSmooth || 0.1;  // 越小过渡越慢
+    this.scaleSmooth  = cfg.scaleSmooth || 0.1;  // smoothing factor
 
-    // — 新增：悬停颜色过渡状态 —  
+    // — Hover color transition —  
     this.hoverColor      = cfg.hoverColor
                           ? color(cfg.hoverColor)
                           : color('#2E0854');
     this.hoverBlend      = 0;
     this.hoverBlendSpeed = cfg.hoverBlendSpeed || 0.05;
 
-    // — 其他噪声种子 —  
+    // — Other noise seed —  
     this.noiseOffset = random(1000);
   }
 
-  /** 渐变色推进 */
+  /**
+   * updateColor() — gradient transition algorithm
+   * Purpose: Interpolate between currentColor and targetColor, and pick a new target when done
+   */
   updateColor() {
     this.currentColor = lerpColor(
       this.currentColor,
@@ -100,41 +87,50 @@ export class Ring {
     }
   }
 
-  /** 每帧更新所有动态 */
+  /**
+   * update() — dynamic state update algorithm
+   * Purpose: Call updateColor each frame (extendable for more updates)
+   */
   update() {
     this.updateColor();
   }
 
-  /** 每帧检测鼠标是否悬停在环内 */
+  /**
+   * checkHover() — mouse hover detection algorithm
+   * Purpose: Compute distance from mouse to ring center and set hover state if within r3
+   */
   checkHover() {
     const d = dist(mouseX, mouseY, this.x, this.y);
     this.isHovered = d <= this.r3;
   }
 
-  /** 绘制环体 —— 包含平滑呼吸缩放 & 半径抖动 & 悬停色渐变 */
+  /**
+   * display() — ring drawing algorithm
+   * Purpose: Combine state updates, breathing scale, jitter, hover color, and draw
+   */
   display() {
-    this.update();
-    this.checkHover();
+    this.update();      // dynamic update
+    this.checkHover();  // hover check
 
-    // —— 更新悬停色混合进度 ——  
+    // — hover blend adjustment —  
     this.hoverBlend += this.isHovered
       ? this.hoverBlendSpeed
       : -this.hoverBlendSpeed;
     this.hoverBlend = constrain(this.hoverBlend, 0, 1);
 
-    // —— 1. 计算目标缩放（Perlin 呼吸） ——  
+    // 1. compute target scale from noise (breathing)  
     const nScale = noise(this.scaleNoiseOff + frameCount * this.noiseScaleSpeed);
     const targetScale = this.isHovered
       ? map(nScale, 0, 1, 0.5,  0.85)
       : map(nScale, 0, 1, 0.98, 1.02);
 
-    // —— 2. 平滑过渡到目标缩放 ——  
+    // 2. smoothly interpolate to target scale  
     this.currentScale = lerp(this.currentScale, targetScale, this.scaleSmooth);
 
-    // —— 3. 计算渲染用颜色 ——  
+    // 3. mix current color and hover color  
     const renderColor = lerpColor(this.currentColor, this.hoverColor, this.hoverBlend);
 
-    // —— 4. 半径抖动 ——  
+    // 4. compute radius jitter  
     const j = this.isHovered
       ? (noise(this.noiseOffset + frameCount * this.jitterSpeed) - 0.5) * this.jitterAmt
       : 0;
@@ -146,40 +142,36 @@ export class Ring {
       translate(this.x, this.y);
       scale(this.currentScale);
 
-      // 占位同心圆
+      // placeholder concentric circles  
       noStroke(); noFill();
       ellipse(0, 0, r1j * 2);
       ellipse(0, 0, r2j * 2);
       ellipse(0, 0, r3j * 2);
 
-      // 三个环区块（背景色用 renderColor）
+      // draw three ring regions  
       this.drawRegionRel(this.r0, r1j, this.fillStyles[0], renderColor, this.patternColors[0]);
       this.drawRegionRel(r1j,   r2j, this.fillStyles[1], renderColor, this.patternColors[1]);
       this.drawRegionRel(r2j,   r3j, this.fillStyles[2], renderColor, this.patternColors[2]);
 
-      // 曲线装饰
+      // draw decorative curve if enabled  
       if (this.hasCurve) {
         push();
           rotate(this.angle);
           stroke('#F35074'); strokeWeight(4); noFill();
           const s2 = 0.5;
-          bezier(0,0,65*s2,-18*s2,193*s2,-10*s2,213*s2,77*s2);
+          bezier(0,0,65*s2,-18*s2,193*s2,-10*s2,213*s2,77*s2); // Bezier curve
         pop();
       }
 
-      // 顶层小圆
+      // top center circle  
       noStroke(); fill(230);
       ellipse(0, 0, this.r0 * 2);
     pop();
   }
 
   /**
-   * 在两半径间绘制“甜甜圈”区块并根据 style 叠加图案
-   * @param {number} iR   内半径
-   * @param {number} oR   外半径（带抖动后的）
-   * @param {string} style  'zigzag'|'dots'|'layered'
-   * @param {p5.Color} bg  背景色
-   * @param {p5.Color|p5.Color[]} pc  图案色
+   * drawRegionRel() — region drawing algorithm
+   * Purpose: Draw a donut-shaped background between two radii and apply a style pattern
    */
   drawRegionRel(iR, oR, style, bg, pc) {
     noStroke();
@@ -191,7 +183,10 @@ export class Ring {
     else if (style === 'layered') this.drawLayeredRel(iR, oR, pc);
   }
 
-  /** 画一个“甜甜圈”填充 */
+  /**
+   * drawDonutRel() — donut fill algorithm
+   * Purpose: Use shape and contour to draw a filled ring between two radii
+   */
   drawDonutRel(iR, oR) {
     beginShape();
       for (let a = 0; a < TWO_PI; a += 0.05) {
@@ -205,7 +200,10 @@ export class Ring {
     endShape(CLOSE);
   }
 
-  /** 锯齿边缘（stroke） */
+  /**
+   * drawZigzagRel() — zigzag edge algorithm
+   * Purpose: Draw alternating inner/outer vertices for a jagged border
+   */
   drawZigzagRel(iR, oR, steps, col) {
     const off = 5;
     stroke(col);
@@ -220,24 +218,30 @@ export class Ring {
     endShape(CLOSE);
   }
 
-  /** 分层同心圈（stroke） */
+  /**
+   * drawLayeredRel() — layered concentric rings algorithm
+   * Purpose: Draw multiple interpolated circles between two radii with random colors
+   */
   drawLayeredRel(iR, oR, baseColors) {
     const cnt  = 14;
     const pool = [...baseColors];
-    while (pool.length < cnt) pool.push(random(baseColors));
-    shuffle(pool, true);
+    while (pool.length < cnt) pool.push(random(baseColors)); // fill color pool
+    shuffle(pool, true);                                   // shuffle() — From team members, randomize array order
 
     noFill();
     strokeWeight(3);
     for (let i = 0; i < cnt; i++) {
       const t  = i / (cnt - 1);
-      const rr = lerp(iR, oR, t);
+      const rr = lerp(iR, oR, t);                          // lerp() — From ChatGPT, interpolate radius
       stroke(pool[i]);
       ellipse(0, 0, rr * 2);
     }
   }
 
-  /** 点环（fill） */
+  /**
+   * drawDotsRel() — dot ring algorithm
+   * Purpose: Randomly place small ellipses between two radii to simulate organic texture
+   */
   drawDotsRel(rMin, rMax, cnt, col) {
     fill(col);
     noStroke();
@@ -254,11 +258,11 @@ export class Ring {
         const sf  = map(eR, rMin, rMax, rMin * 0.03, rMax * 0.018);
         const w   = random(4, 6) * sf;
         const h   = random(3, 5) * sf;
-        push();
+        push();                                            
           translate(x, y);
           rotate(ang + random(-0.3, 0.3));
           ellipse(0, 0, w, h);
-        pop();
+        pop();                                             
       }
     }
   }
