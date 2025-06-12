@@ -239,9 +239,11 @@ This ensures that when `value` equals `start1`, the result is `start2`; when `va
 ![Preview](assets/mapSample.png)
 
 #### 🔧 Real Use Case
+
 In the Ring class, I map noise outputs to smooth scale factors, producing a breathing effect between 0.98× and 1.02× base size.
 In ellipsePattern.js, I remap noise to rotation angles (0 → 2π), creating continuous, organic motion.
 In circlePattern.js, I convert noise to stroke weights and dot counts for a natural pulsing texture.
+
 ---
 
 ## 10. 🔁 Iterative Development & Refinement
